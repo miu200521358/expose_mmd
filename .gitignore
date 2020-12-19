@@ -1,0 +1,17 @@
+*.mp4
+*.avi
+*.pyc
+output/
+samples/
+build/
+log/
+bone/あにまさ式ミク準標準ボーンout.json
+work_dir/
+checkpoints/
+data/models/
+data/network_weights
+*.npy
+*.pkl
+*.dat
+
+lighttrack/logs/test_logs.txt
