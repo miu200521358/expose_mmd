@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import time
+import os
 
 from mmd.utils.MLogger import MLogger
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument('--upper-motion', type=int, dest='upper_motion', default="0", help='Whether to generate upper motion only')
     parser.add_argument('--hand-motion', type=int, dest='hand_motion', default="0", help='Whether to generate hand motion')
     parser.add_argument('--face-motion', type=int, dest='face_motion', default="0", help='Whether to generate face motion')
-    parser.add_argument('--center-scale', type=float, dest='center_scale', default="50", help='center scale')
+    parser.add_argument('--center-scale', type=float, dest='center_scale', default="4", help='center scale')
     parser.add_argument('--verbose', type=int, dest='verbose', default=20, help='Log level')
     parser.add_argument("--log-mode", type=int, dest='log_mode', default=0, help='Log output mode')
 
@@ -98,4 +99,13 @@ if __name__ == "__main__":
 
     logger.info("MMD自動トレース終了\n　処理対象映像ファイル: {0}\n　処理内容: {1}\n　トレース結果: {2}\n　処理時間: {3}", \
                 args.video_file, args.process, args.img_dir, show_worked_time(elapsed_time), decoration=MLogger.DECORATION_BOX)
-    
+
+    # 終了音を鳴らす
+    if os.name == "nt":
+        # Windows
+        try:
+            import winsound
+            winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+        except Exception:
+            pass
+
