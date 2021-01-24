@@ -1,9 +1,32 @@
 conda create -n expose pip python=3.7
 
-conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
+conda activate expose
+
 conda install pytorch=1.6.0 torchvision=0.7.0 cudatoolkit=10.2 -c pytorch
 
 pip install -r requirements.txt
+
+cd lighttrack\lib
+
+python setup_windows.py build_ext --inplace
+※スキップされたらcファイルを削除
+
+python setup_cuda.py build_ext --inplace
+
+cd ..\graph\torchlight
+
+python setup.py install
+
+
+----------
+
+python executor.py --video-file E:\MMD\MikuMikuDance_v926x64\Work\201805_auto\03\bbf\bbf_1740-2740.mp4 --process prepare,expose,tracking --body-motion 1 --hand-motion 1 --face-motion 1 --upper-motion 0 --center-scale 5 --smooth-key 1 --verbose 20 --log-mode 0
+
+
+python executor.py --img-dir E:\MMD\MikuMikuDance_v926x64\Work\201805_auto\03\bbf\bbf_1740-2740_mp4_20210114_091153 --process expose,tracking --body-motion 1 --hand-motion 1 --face-motion 1 --upper-motion 0 --center-scale 5 --smooth-key 1 --verbose 20 --log-mode 0 
+
+----------
+
 
 https://expose.is.tue.mpg.de/
 https://smpl-x.is.tue.mpg.de/
@@ -40,11 +63,6 @@ pip install cython opencv-python pillow matplotlib
 pip install "C:\MMD\frankmocap_mmd\scripts\setproctitle-1.2.1-cp37-cp37m-win_amd64.whl"
 
 pip install scikit-image
-
----------
-for monoloco
-
-
 
 ---------
 

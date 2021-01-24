@@ -40,7 +40,7 @@ def execute(args):
             frame_json_pathes = sorted(glob.glob(os.path.join(ordered_person_dir_path, "frame_*.json")), key=sort_by_numeric)
 
             all_joints = {}
-        
+
             for frame_json_path in tqdm(frame_json_pathes, desc=f"Read No.{oidx:03} ... "):
                 m = frame_pattern.match(os.path.basename(frame_json_path))
                 if m:
@@ -65,7 +65,7 @@ def execute(args):
                         all_joints[(jname, 'x')][fno] = joint["x"]
                         all_joints[(jname, 'y')][fno] = joint["y"]
                         all_joints[(jname, 'z')][fno] = joint["z"]
-
+                    
                     if "faces" in frame_joints:
                         # 表情グローバル座標を保持
                         for fname, face in frame_joints["faces"].items():
@@ -89,17 +89,9 @@ def execute(args):
                             all_joints[(ename, 'ex')][fno] = eye["x"]
                             all_joints[(ename, 'ey')][fno] = eye["y"]
 
-                    if "depth" in frame_joints:
-                        if ("depth", 'd') not in all_joints:
-                            all_joints[("depth", 'd')] = {}
-
-                        all_joints[("depth", 'd')][fno] = frame_joints["depth"]["depth"]
-
             # スムージング
             for (jname, axis), joints in tqdm(all_joints.items(), desc=f"Filter No.{oidx:03} ... "):
-                filter = OneEuroFilter(freq=30, mincutoff=0.1, beta=0.005, dcutoff=0.1)
-                # filter = OneEuroFilter(freq=30, mincutoff=1, beta=0.1, dcutoff=1)
-                # filter = OneEuroFilter(freq=30, mincutoff=0.5, beta=0.05, dcutoff=0.5)
+                filter = OneEuroFilter(freq=30, mincutoff=1, beta=0.00000000001, dcutoff=1)
                 for fno, joint in joints.items():
                     all_joints[(jname, axis)][fno] = filter(joint, fno)
 
@@ -136,9 +128,6 @@ def execute(args):
                         for ename, eye in frame_joints["faces"].items():
                             frame_joints["faces"][ename]["x"] = all_joints[(ename, 'fx')][fno]
                             frame_joints["faces"][ename]["y"] = all_joints[(ename, 'fy')][fno]
-
-                    if "depth" in frame_joints:
-                        frame_joints["depth"]["depth"] = all_joints[("depth", 'd')][fno]
 
                     smooth_json_path = os.path.join(smoothed_person_dir_path, f"smooth_{fno:012}.json")
                     
