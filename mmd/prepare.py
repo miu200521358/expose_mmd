@@ -117,67 +117,67 @@ def execute(args):
                     cv2.imwrite(resize_img_path.format(n), out_frame)
 
             # 補間 --------------------------
-
-            logger.info("補間生成開始", decoration=MLogger.DECORATION_BOX)
-
-            # 元のフレームを30fpsで計算し直した場合の1Fごとの該当フレーム数
-            interpolations = np.arange(0, count + 1, fps / 30)
-
-            for kidx, k in enumerate(tqdm(interpolations)):
-                # 30fps用にディレクトリ作成
-                os.makedirs(os.path.join(process_img_dir, "frames", f"{kidx:012}"), exist_ok=True)
-
-                # コピー対象の画像パス
-                target_path = resize_img_path.format(round(k))
-
-                if not os.path.exists(target_path):
-                    # 最終フレームとかで対象パスがない場合、ひとつ手前
-                    target_path = resize_img_path.format(round(k) - 1)
-
-                process_path = process_img_path.format(kidx)
-                if not os.path.exists(target_path):
-                    # 最終フレームとかで対象パスがない場合、ひとつ手前
-                    target_path = process_img_path.format(kidx - 1)
-
-                # 該当フレーム番号の画像をコピー
-                shutil.copy(target_path, process_path)
-
-            # # フレーム補間用比率
-            # fps_interpolation = fps / 30
-
-            # k = 0
-            # now_frame = None
-
-            # # 最後の１つ手前（補間ができる状態）までループ
-            # for k in tqdm(range(round(count * (30 / fps)) - 1)):
-
-            #     # 補間した出力CNT
-            #     inter_cnt = k * fps_interpolation
-            #     # INDEXと比率（整数部と小数部）
-            #     inter_cnt_rate, inter_cnt_idx = math.modf(inter_cnt)
-            #     # logger.debug("フレーム補間: {0} -> {1}, idx: {2}, rate: {3}" % ( cnt, inter_cnt, inter_cnt_idx, inter_cnt_rate ))
-
-            #     # 前のフレーム
-            #     past_frame = cv2.imread(resize_img_path.format(int(inter_cnt_idx)))
-            #     # 今回のフレーム
-            #     now_frame = cv2.imread(resize_img_path.format(int(inter_cnt_idx + 1)))
-
-            #     # 混ぜ合わせる比率
-            #     past_rate = inter_cnt_rate
-            #     now_rate = 1 - inter_cnt_rate
-
-            #     # フレーム補間をして出力する
-            #     target_output_frame = cv2.addWeighted(past_frame, past_rate, now_frame, now_rate, 0)
-
-            #     # PNG出力
-            #     cv2.imwrite(process_img_path.format(k), target_output_frame)
-
-            #     # if k % 100 == 0:
-            #     #     logger.info(f"-- 補間生成中 {k}")
-
-            # # 最後にnowを出力
-            # last_k = k + 1
-            # cv2.imwrite(process_img_path.format(last_k), now_frame)
+            if abs(fps - 30.0) > 0.01:
+                logger.info("補間生成開始", decoration=MLogger.DECORATION_BOX)
+    
+                # 元のフレームを30fpsで計算し直した場合の1Fごとの該当フレーム数
+                interpolations = np.arange(0, count + 1, fps / 30)
+    
+                for kidx, k in enumerate(tqdm(interpolations)):
+                    # 30fps用にディレクトリ作成
+                    os.makedirs(os.path.join(process_img_dir, "frames", f"{kidx:012}"), exist_ok=True)
+    
+                    # コピー対象の画像パス
+                    target_path = resize_img_path.format(round(k))
+    
+                    if not os.path.exists(target_path):
+                        # 最終フレームとかで対象パスがない場合、ひとつ手前
+                        target_path = resize_img_path.format(round(k) - 1)
+    
+                    process_path = process_img_path.format(kidx)
+                    if not os.path.exists(target_path):
+                        # 最終フレームとかで対象パスがない場合、ひとつ手前
+                        target_path = process_img_path.format(kidx - 1)
+    
+                    # 該当フレーム番号の画像をコピー
+                    shutil.copy(target_path, process_path)
+    
+                # # フレーム補間用比率
+                # fps_interpolation = fps / 30
+    
+                # k = 0
+                # now_frame = None
+    
+                # # 最後の１つ手前（補間ができる状態）までループ
+                # for k in tqdm(range(round(count * (30 / fps)) - 1)):
+    
+                #     # 補間した出力CNT
+                #     inter_cnt = k * fps_interpolation
+                #     # INDEXと比率（整数部と小数部）
+                #     inter_cnt_rate, inter_cnt_idx = math.modf(inter_cnt)
+                #     # logger.debug("フレーム補間: {0} -> {1}, idx: {2}, rate: {3}" % ( cnt, inter_cnt, inter_cnt_idx, inter_cnt_rate ))
+    
+                #     # 前のフレーム
+                #     past_frame = cv2.imread(resize_img_path.format(int(inter_cnt_idx)))
+                #     # 今回のフレーム
+                #     now_frame = cv2.imread(resize_img_path.format(int(inter_cnt_idx + 1)))
+    
+                #     # 混ぜ合わせる比率
+                #     past_rate = inter_cnt_rate
+                #     now_rate = 1 - inter_cnt_rate
+    
+                #     # フレーム補間をして出力する
+                #     target_output_frame = cv2.addWeighted(past_frame, past_rate, now_frame, now_rate, 0)
+    
+                #     # PNG出力
+                #     cv2.imwrite(process_img_path.format(k), target_output_frame)
+    
+                #     # if k % 100 == 0:
+                #     #     logger.info(f"-- 補間生成中 {k}")
+    
+                # # 最後にnowを出力
+                # last_k = k + 1
+                # cv2.imwrite(process_img_path.format(last_k), now_frame)
 
             # 終わったら開放
             cap.release()
